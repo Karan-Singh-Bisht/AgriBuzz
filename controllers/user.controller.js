@@ -9,7 +9,13 @@ module.exports.renderSignUpPage = asyncHandler(async (req, res) => {
 });
 
 module.exports.registerUser = asyncHandler(async (req, res) => {
-  const { firstName, lastName, email, dob, gender, password } = req.body;
+  const { firstName, lastName, email, dob, gender, password, confirmPassword } =
+    req.body;
+
+  if (password != confirmPassword) {
+    req.flash("error", "Password does not match!");
+    return res.redirect("/user/registerUser");
+  }
   const existedUser = await userModel.findOne({ email });
   if (existedUser) {
     req.flash("error", "Email already exists!");

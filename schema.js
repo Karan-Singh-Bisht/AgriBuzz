@@ -22,6 +22,9 @@ const userSignUpValidationSchema = Joi.object({
   password: Joi.string().required().messages({
     "any.required": "Password is required.",
   }),
+  confirmPassword: Joi.string().required().messages({
+    "any.required": "Confirm password is required.",
+  }),
   avatar: Joi.string().uri().optional().messages({
     "string.uri": "Avatar must be a valid URL.",
   }),
