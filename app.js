@@ -56,6 +56,12 @@ const agriRoute = require("./routes/agribuzz.route");
 
 app.use("/user", userRoute);
 app.use("/agribuzz", agriRoute);
+app.get("/", (req, res) => {
+  res.redirect("/agribuzz");
+});
+app.all("*", (req, res) => {
+  res.render("error");
+});
 
 const port = process.env.PORT || 3000;
 

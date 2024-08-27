@@ -5,6 +5,8 @@ const {
   renderLoginPage,
   registerUser,
   loginUser,
+  logoutUser,
+  renderDashBoard,
 } = require("../controllers/user.controller");
 const validateSignUpUser = require("../middlewares/validateSignUpUser.middleware");
 const validateLoginUser = require("../middlewares/validateLoginUser.middleware");
@@ -17,7 +19,9 @@ router.post(
   validateSignUpUser,
   registerUser
 );
+router.get("/:id/dashboard", renderDashBoard);
 router.get("/loginUser", renderLoginPage);
 router.post("/login", validateLoginUser, loginUser);
+router.get("/logout", logoutUser);
 
 module.exports = router;

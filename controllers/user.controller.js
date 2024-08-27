@@ -43,8 +43,8 @@ module.exports.registerUser = asyncHandler(async (req, res) => {
     if (err) {
       return next(err);
     }
-    req.flash("success", `Welcome to SIH ${firstName}`);
-    res.redirect("/user/registerUser"); //Redirect to home page
+    req.flash("success", `Welcome to AgriBuzz ${firstName}`);
+    res.redirect("/agribuzz"); //Redirect to home page
   });
 });
 
@@ -60,7 +60,7 @@ module.exports.loginUser = asyncHandler(async (req, res, next) => {
 
     if (!user) {
       req.flash("error", info.message || "Login failed.");
-      return res.redirect("/user/loginUser");
+      return res.redirect("/agribuzz");
     }
 
     req.logIn(user, (err) => {
@@ -69,7 +69,22 @@ module.exports.loginUser = asyncHandler(async (req, res, next) => {
       }
 
       req.flash("success", `Welcome Back ${user.firstName}`);
-      res.redirect("/user/loginUser"); //Redirect to home page
+      res.redirect("/agribuzz"); //Redirect to home page
     });
   })(req, res, next); // Call the passport middleware
+});
+
+module.exports.logoutUser = asyncHandler(async (req, res) => {
+  req.logout((err) => {
+    if (err) {
+      console.error("Error logging out:", err);
+      return res.status(500).send("Error logging out.");
+    }
+    req.flash("success", "You have been logged out successfully.");
+    res.redirect("/user/loginUser");
+  });
+});
+
+module.exports.renderDashBoard = asyncHandler(async (req, res) => {
+  res.render("dashboard", { user: req.user });
 });
