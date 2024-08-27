@@ -52,8 +52,10 @@ app.engine("ejs", ejsMate);
 
 //Route Declaration
 const userRoute = require("./routes/user.route");
+const agriRoute = require("./routes/agribuzz.route");
 
 app.use("/user", userRoute);
+app.use("/agribuzz", agriRoute);
 
 const port = process.env.PORT || 3000;
 
