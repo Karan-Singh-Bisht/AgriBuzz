@@ -1,4 +1,6 @@
-require("dotenv").config();
+if (process.env.NODE_ENV != "production") {
+  require("dotenv").config();
+}
 
 const express = require("express");
 const app = express();
@@ -6,8 +8,19 @@ const path = require("path");
 const ejsMate = require("ejs-mate");
 const passport = require("./config");
 const expressSession = require("express-session");
+const MongoStore = require("connect-mongo");
 const cookieParser = require("cookie-parser");
 const flash = require("connect-flash");
+
+const dbUrl = process.env.MONGODB_URI;
+
+const store = MongoStore.create({
+  mongoUrl: dbUrl,
+  crypto: {
+    secret: process.env.EXPRESS_SESSION_SECRET,
+  },
+  touchAfter: 24 * 60 * 60,
+});
 
 app.use(
   expressSession({
