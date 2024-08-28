@@ -24,6 +24,7 @@ const store = MongoStore.create({
 
 app.use(
   expressSession({
+    store,
     secret: process.env.EXPRESS_SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
