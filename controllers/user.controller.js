@@ -88,3 +88,85 @@ module.exports.logoutUser = asyncHandler(async (req, res) => {
 module.exports.renderDashBoard = asyncHandler(async (req, res) => {
   res.render("dashboard", { user: req.user });
 });
+
+module.exports.crops = asyncHandler(async (req, res) => {
+  res.render("crops");
+});
+
+module.exports.cropMap = asyncHandler(async (req, res) => {
+  res.render("cropMap");
+});
+
+module.exports.renderUpdateUserInfo = asyncHandler(async (req, res) => {
+  res.render("userUpdateForm");
+});
+
+module.exports.updatedUser = asyncHandler(async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const { firstName, lastName, email } = req.body;
+
+    // Fetch the user from the database
+    const user = await userModel.findById(id);
+
+    if (!userModel) {
+      req.flash("error", "User not found.");
+      return res.redirect(`/user/${id}/editUserProfile`);
+    }
+
+    // Check if the email already exists
+    const existingEmail = await userModel.findOne({ email });
+    if (existingEmail && existingEmail._id.toString() !== id) {
+      req.flash("error", "User with this email already exists.");
+      return res.redirect(`/user/${id}/setting`);
+    }
+
+    if (user.emailChanged && email !== user.email) {
+      req.flash("error", "Email can only be changed once.");
+      return res.redirect(`/user/${id}/setting`);
+    }
+    // Update flags if username or email is being changed for the first time
+    if (
+      firstName !== user.firstName ||
+      lastName !== user.lastName ||
+      email !== user.email
+    ) {
+      await userModel.findByIdAndUpdate(id, {
+        firstNameChanged: true,
+        lastNameChanged: true,
+        emailChanged: true,
+      });
+    }
+
+    // Update user information
+    const updatedUser = await userModel.findByIdAndUpdate(
+      id,
+      {
+        firstName,
+        lastName,
+        email,
+      },
+      { new: true }
+    );
+
+    if (!updatedUser) {
+      throw new ApiError(500, "Failed to update user");
+    }
+
+    req.flash("success", "User Profile Updated Successfully!");
+    res.redirect(`/user/${id}/dashboard`);
+  } catch (error) {
+    console.error(error); // Log the error for debugging
+    req.flash("error", "An error occurred while updating the user profile.");
+    res.redirect(`/user/${id}/setting`);
+  }
+});
+
+module.exports.calendar = asyncHandler(async (req, res) => {
+  res.render("calendar");
+});
+
+module.exports.market = asyncHandler(async (req, res) => {
+  res.render("market");
+});

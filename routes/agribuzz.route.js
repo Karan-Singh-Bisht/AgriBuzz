@@ -3,12 +3,11 @@ const router = express.Router();
 const {
   homeController,
   contactController,
-  yieldController,
+  sendVerificationEmail,
 } = require("../controllers/home.controller");
 
 router.get("/", homeController);
 router.get("/contact", contactController);
-
-router.get("/yieldPrediction", yieldController);
+router.post("/contact/submit", sendVerificationEmail);
 
 module.exports = router;

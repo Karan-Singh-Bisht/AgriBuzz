@@ -11,6 +11,7 @@ const expressSession = require("express-session");
 const MongoStore = require("connect-mongo");
 const cookieParser = require("cookie-parser");
 const flash = require("connect-flash");
+const methodOverride = require("method-override");
 
 const dbUrl = process.env.MONGODB_URI;
 
@@ -60,6 +61,7 @@ app.set("view engine", "ejs");
 app.use(express.json({ limit: "16kb" }));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
+app.use(methodOverride("_method"));
 app.use(cookieParser());
 
 app.engine("ejs", ejsMate);

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://api.tomtom.com/maps-sdk-for-web/cdn/6.x/6.15.0/maps/maps.css"
+    />
+    <script src="https://api.tomtom.com/maps-sdk-for-web/cdn/6.x/6.15.0/maps/maps-web.min.js"></script>
+    <script src="https://api.tomtom.com/maps-sdk-for-web/cdn/6.x/6.15.0/services/services-web.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <title>Document</title>
+    <style>
+      #map {
+        width: 100%;
+        height: 500px; /* Adjust height as needed */
+      }
+    </style>
+  </head>
+  <body style="background: linear-gradient(70deg, #121212, #232323)">
+    <h1 style="color: white">MAP VIEW</h1>
+    <div class="map-container">
+      <h4 style="color: white">Nearby Markets:</h4>
+      <div id="map" style="width: vw; height: 80vh"></div>
+    </div>
+    <!-- This is where the map will be rendered -->
+  </body>
+  <script>
+    // console.log('TomTom tt object:', tt);
+    window.onload = function () {
+      // Initialize the map only after the window has loaded to ensure that the tt object is available
+      var map = tt.map({
+        key: "3YzQxwAFHF8yAMWxHfKrjbNN1U3WHarx",
+        container: "map", // The ID of the div where the map should be rendered
+        center: [0, 0], // Initial center coordinates, can be changed later
+        zoom: 14,
+      });
+
+      map.addControl(new tt.NavigationControl());
+
+      let currentRouteLayerId = null;
+
+      // Function to create a marker
+      function createMarker(lngLat, color, popupText, onClick) {
+        var marker = new tt.Marker({
+          color: color,
+        })
+          .setLngLat(lngLat)
+          .setPopup(new tt.Popup().setText(popupText))
+          .addTo(map);
+
+        if (onClick) {
+          marker.getElement().addEventListener("click", function () {
+            onClick(lngLat);
+          });
+        }
+      }
+
+      // Function to create a route
+      function createRoute(start, end) {
+        // Remove the existing route if there is one
+        if (currentRouteLayerId) {
+          map.removeLayer(currentRouteLayerId);
+          map.removeSource(currentRouteLayerId);
+        }
+
+        tt.services
+          .calculateRoute({
+            key: "3YzQxwAFHF8yAMWxHfKrjbNN1U3WHarx",
+            traffic: false,
+            locations: [start, end],
+          })
+          .then(function (routeData) {
+            var geojson = routeData.toGeoJson();
+            currentRouteLayerId =
+              "route-" + start.join("-") + "-" + end.join("-");
+
+            map.addLayer({
+              id: currentRouteLayerId,
+              type: "line",
+              source: {
+                type: "geojson",
+                data: geojson,
+              },
+              layout: {
+                "line-cap": "round",
+                "line-join": "round",
+              },
+              paint: {
+                "line-color": "#000000", // Change the route color here
+                "line-width": 6,
+              },
+            });
+
+            // Zoom to fit the route
+            var bounds = new tt.LngLatBounds();
+            geojson.features[0].geometry.coordinates.forEach(function (coord) {
+              bounds.extend(coord);
+            });
+            map.fitBounds(bounds, { padding: 20 });
+          })
+          .catch(function (error) {
+            console.error("Error creating route: ", error);
+          });
+      }
+
+      // Get the user's location
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          function (position) {
+            var userLocation = [
+              position.coords.longitude,
+              position.coords.latitude,
+            ];
+            console.log("User location: ", userLocation);
+            map.setCenter(userLocation);
+
+            // Add a marker for the user's location
+            createMarker(userLocation, "blue", "You are here");
+
+            // Define nearby locations (e.g., gyms, yoga places)
+            var nearbyLocations = [
+              {
+                lng: userLocation[0] + 0.01,
+                lat: userLocation[1] + 0.01,
+                name: "Azadpur Mandi",
+              },
+              {
+                lng: userLocation[0] - 0.01,
+                lat: userLocation[1] - 0.015,
+                name: "APMC Market",
+              },
+              {
+                lng: userLocation[0] + 0.015,
+                lat: userLocation[1] + 0.015,
+                name: "Daily Rashan Bhandaar",
+              },
+              {
+                lng: userLocation[0] - 0.015,
+                lat: userLocation[1] + 0.015,
+                name: "Rice Supplier",
+              },
+              {
+                lng: userLocation[0] + 0.02,
+                lat: userLocation[1] - 0.02,
+                name: "Reliance Fresh",
+              },
+              {
+                lng: userLocation[0] - 0.02,
+                lat: userLocation[1] - 0.02,
+                name: "Spencer’s Mandi",
+              },
+              {
+                lng: userLocation[0] + 0.025,
+                lat: userLocation[1] + 0.025,
+                name: "Kisan Mandi",
+              },
+              {
+                lng: userLocation[0] - 0.025,
+                lat: userLocation[1] + 0.025,
+                name: "Mandi House",
+              },
+              {
+                lng: userLocation[0] + 0.03,
+                lat: userLocation[1] - 0.03,
+                name: "Rajan House of Rashan",
+              },
+              {
+                lng: userLocation[0] - 0.03,
+                lat: userLocation[1] - 0.04,
+                name: "Supply Collectors",
+              },
+            ];
+
+            var bounds = new tt.LngLatBounds();
+            nearbyLocations.forEach(function (location) {
+              var position = [location.lng, location.lat];
+              console.log("Nearby location: ", position, location.name);
+              bounds.extend(position);
+              createMarker(
+                position,
+                "red",
+                location.name,
+                function (targetLocation) {
+                  // Create route when marker is clicked
+                  createRoute(userLocation, targetLocation);
+                }
+              );
+            });
+
+            map.fitBounds(bounds, { padding: 20 });
+          },
+          function (error) {
+            console.error("Error getting user location: ", error);
+          }
+        );
+      } else {
+        console.error("Geolocation is not supported by this browser.");
+      }
+    };
+  </script>
+</html>

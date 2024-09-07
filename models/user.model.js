@@ -40,6 +40,18 @@ const userSchema = new mongoose.Schema(
     avatar: {
       type: String, //cloudinary Url
     },
+    firstNameChanged: {
+      type: Boolean,
+      default: false,
+    },
+    lastNameChanged: {
+      type: Boolean,
+      default: false,
+    },
+    emailChanged: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );

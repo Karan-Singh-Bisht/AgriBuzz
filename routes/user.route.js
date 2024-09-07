@@ -7,6 +7,12 @@ const {
   loginUser,
   logoutUser,
   renderDashBoard,
+  crops,
+  cropMap,
+  renderUpdateUserInfo,
+  updatedUser,
+  calendar,
+  market,
 } = require("../controllers/user.controller");
 const validateSignUpUser = require("../middlewares/validateSignUpUser.middleware");
 const validateLoginUser = require("../middlewares/validateLoginUser.middleware");
@@ -19,9 +25,15 @@ router.post(
   validateSignUpUser,
   registerUser
 );
+router.get("/:id/setting", renderUpdateUserInfo);
+router.put("/:id/updateUser", updatedUser);
 router.get("/:id/dashboard", renderDashBoard);
+router.get("/crops", crops);
+router.get("/crops/:crop", cropMap);
 router.get("/loginUser", renderLoginPage);
 router.post("/login", validateLoginUser, loginUser);
 router.get("/logout", logoutUser);
+router.get("/:id/dashboard/calendar", calendar);
+router.get("/:id/dashboard/market", market);
 
 module.exports = router;

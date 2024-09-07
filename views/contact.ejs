@@ -4,21 +4,18 @@
     <div
       class="d-flex flex-column flex-lg-row align-items-center justify-content-center"
     >
-      <div class="mb-4 mb-lg-0">
-        <img
-          src="/images/contact-img.jpg"
-          alt="Contact Image"
-          class="img-fluid rounded"
-          style="max-width: 100%; height: auto"
-        />
-      </div>
       <div class="flex-grow-1" style="width: 1000px">
-        <form class="contact-form">
+        <form
+          action="/agribuzz/contact/submit"
+          method="post"
+          class="contact-form"
+        >
           <div class="form-fields">
             <div class="mb-3">
               <label for="firstName" class="form-label">First Name</label>
               <input
                 type="text"
+                name="firstName"
                 class="form-control"
                 id="firstName"
                 placeholder="Enter first name"
@@ -28,6 +25,7 @@
               <label for="lastName" class="form-label">Last Name</label>
               <input
                 type="text"
+                name="lastName"
                 class="form-control"
                 id="lastName"
                 placeholder="Enter last name"
@@ -39,6 +37,7 @@
                 type="email"
                 class="form-control"
                 id="email"
+                name="email"
                 placeholder="Enter email address"
               />
             </div>
@@ -49,6 +48,7 @@
                 id="message"
                 rows="4"
                 placeholder="Enter your message"
+                name="message"
               ></textarea>
             </div>
             <button type="submit" class="btn btn-primary w-100">Submit</button>
