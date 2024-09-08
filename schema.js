@@ -36,7 +36,7 @@ const userLoginValidationSchema = Joi.object({
     "any.required": "Email is required.",
   }),
   password: Joi.string().required().messages({
-    "any.required": "Password is required.",
+    "any.required": "Password is required!",
   }),
 });
 

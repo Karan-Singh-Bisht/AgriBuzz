@@ -12,7 +12,7 @@ passport.use(
         const user = await userModel.findOne({ email });
 
         if (!user) {
-          return done(null, false, { message: "Incorrect email." });
+          return done(null, false, { message: "Incorrect email!" });
         }
 
         const isMatch = await user.isPasswordCorrect(password);
