@@ -28,7 +28,3 @@ module.exports.sendVerificationEmail = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
-
-module.exports.yieldController = (req, res) => {
-  res.render("yield");
-};
