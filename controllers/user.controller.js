@@ -170,3 +170,7 @@ module.exports.calendar = asyncHandler(async (req, res) => {
 module.exports.market = asyncHandler(async (req, res) => {
   res.render("market");
 });
+
+module.exports.weather = asyncHandler(async (req, res) => {
+  res.render("weather");
+});
